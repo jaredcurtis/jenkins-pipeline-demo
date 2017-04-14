@@ -1,0 +1,36 @@
+---
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: jenkins-jc
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: jenkins-jc
+        tier: jenkins
+    spec:
+      containers:
+          - name: jenkins-jc
+            image: us.gcr.io/xmatters-playground-one/jenkins-jc
+            ports:
+                - containerPort: 8080
+                - containerPort: 5000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: jenkins-jc
+  labels:
+    app: jenkins-jc
+    tier: jenkins
+spec:
+  ports:
+    # the port that this service should serve on
+  - port: 80
+    targetPort: 8080
+  type: NodePort
+  selector:
+    app: jenkins-jc
+    tier: jenkins
