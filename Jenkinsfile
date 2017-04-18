@@ -21,6 +21,9 @@ pipeline {
             }
         }
         stage('Deploy Dev') {
+            when {
+                expression { env.BRANCH_NAME != 'master' }
+            }
             steps {
                 withCredentials([file(credentialsId: 'xmatters-playground-one', variable: 'GOOGLE_APPLICATION_CREDENTIALS')]) {
                     sh 'make deploy clean'
@@ -28,6 +31,9 @@ pipeline {
             }
         }
         stage('Deploy Tst') {
+            when {
+                expression { env.BRANCH_NAME != 'master' }
+            }
             steps {
                 withCredentials([file(credentialsId: 'xmatters-playground-one', variable: 'GOOGLE_APPLICATION_CREDENTIALS')]) {
                     withEnv(['ENV=tst', 'REPLICAS=2']) {
