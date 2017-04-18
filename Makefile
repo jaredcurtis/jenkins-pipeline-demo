@@ -28,3 +28,8 @@ scale: deploy
 
 clean:
 	rm -rf ${BUILDDIR}
+
+purge:
+	-kubectl delete namespace thebest-${TAG}-dev
+	-kubectl delete namespace thebest-${TAG}-tst
+	-kubectl delete namespace thebest-${TAG}-prd

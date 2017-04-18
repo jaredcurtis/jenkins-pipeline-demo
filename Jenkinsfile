@@ -37,6 +37,9 @@ pipeline {
             }
         }
         stage('Deploy Prd') {
+            when {
+                expression { env.BRANCH_NAME == 'master' }
+            }
             steps {
                 input message: 'Deploy to production?', ok: 'We\'re all counting on you'
                 withCredentials([file(credentialsId: 'xmatters-playground-one', variable: 'GOOGLE_APPLICATION_CREDENTIALS')]) {
@@ -46,7 +49,13 @@ pipeline {
                 }
             }
         }
-
-
+        stage('Purge') {
+            steps {
+                input message: 'Purge environments?'
+                withCredentials([file(credentialsId: 'xmatters-playground-one', variable: 'GOOGLE_APPLICATION_CREDENTIALS')]) {
+                    sh 'make purge'
+                }
+            }
+        }
     }
 }
