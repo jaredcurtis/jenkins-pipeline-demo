@@ -26,8 +26,5 @@ pipeline {
                 }
             }
         }
-        steps {
-            sh 'make clean'
-        }
     }
 }
