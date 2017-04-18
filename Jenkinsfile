@@ -1,3 +1,4 @@
+env.PROJECT = 'xmatters-playground-one'
 pipeline {
     agent any
 
@@ -9,7 +10,7 @@ pipeline {
                 withCredentials([file(credentialsId: 'xmatters-playground-one', variable: 'CREDS')]) {
                     sh "gcloud auth activate-service-account --key-file=${env.CREDS}"
                 }
-                git branch: params.BRANCH, url: 'https://github.com/jaredcurtis/jenkins-pipeline-demo/'
+                git branch: env.BRANCH_NAME, url: 'https://github.com/jaredcurtis/jenkins-pipeline-demo/'
             }
         }
         stage('Bake') {
@@ -19,12 +20,33 @@ pipeline {
                 }
             }
         }
-        stage('Deploy') {
+        stage('Deploy Dev') {
             steps {
                 withCredentials([file(credentialsId: 'xmatters-playground-one', variable: 'GOOGLE_APPLICATION_CREDENTIALS')]) {
-                    sh 'make deploy scale'
+                    sh 'make deploy clean'
                 }
             }
         }
+        stage('Deploy Tst') {
+            steps {
+                withCredentials([file(credentialsId: 'xmatters-playground-one', variable: 'GOOGLE_APPLICATION_CREDENTIALS')]) {
+                    withEnv(['ENV=tst', 'REPLICAS=2']) {
+                        sh 'make deploy scale clean'
+                    }
+                }
+            }
+        }
+        stage('Deploy Prd') {
+            steps {
+                input message: 'Deploy to production?', ok: 'We\'re all counting on you'
+                withCredentials([file(credentialsId: 'xmatters-playground-one', variable: 'GOOGLE_APPLICATION_CREDENTIALS')]) {
+                    withEnv(['ENV=prd', 'REPLICAS=3']) {
+                        sh 'make deploy scale clean'
+                    }
+                }
+            }
+        }
+
+
     }
 }

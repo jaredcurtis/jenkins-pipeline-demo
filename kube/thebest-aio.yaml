@@ -1,7 +1,7 @@
 ---
 kind: Namespace
 metadata:
-      name: %NAMESPACE
+  name: %NAMESPACE
 ---
 apiVersion: v1
 kind: ReplicationController
@@ -16,10 +16,10 @@ spec:
         tier: web
     spec:
       containers:
-          - name: thebest
-            image: %IMAGE
-            ports:
-                - containerPort: 80
+        - name: thebest
+          image: %IMAGE
+          ports:
+            - containerPort: 80
 ---
 apiVersion: v1
 kind: Service
